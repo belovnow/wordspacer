@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap" rel="stylesheet">
+  <title>WordSpacer</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="layout">
+      <header>
+        <h1>WordSpacer</h1>
+        <p>Сервис для дурачков-анимешников</p>
+      </header>
+      <label>
+        <div>Разделительный символ</div>
+        <input type="text" id="separate-symbol" placeholder="Пробел по умолчанию">
+      </label>
+      <label>
+        <div>Количество разделительных символов</div>
+        <input type="number" id="separate-count" placeholder="1 символ по умолчанию">
+      </label>
+      <label>
+        <div>Исходный текст</div>
+        <textarea id="original-text" cols="30" rows="5"></textarea>
+      </label>
+      <label>
+        <div>Результат</div>
+        <textarea id="result-text" cols="30" rows="5" readonly></textarea>
+      </label>
+      <button id="button-copy" type="button">Скопировать</button>
+    </div>
+  </div>
+</body>
+
+<script>
+  let separator = " ";
+  let sepparatorCount = 1;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const textarea = document.getElementById("original-text");
+    textarea.oninput = (ev) => displayText(ev.target.value);
+
+    const separatorSymbolInput = document.getElementById("separate-symbol");
+    separatorSymbolInput.oninput = (ev) => {
+      separator = ev.target.value;
+      displayText(textarea.value);
+    };
+
+    const separatorCountInput = document.getElementById("separate-count");
+    separatorCountInput.oninput = (ev) => {
+      sepparatorCount = ev.target.value;
+      displayText(textarea.value);
+    };
+
+    const copyButton = document.getElementById("button-copy");
+    copyButton.onclick = () => {
+      const textareaResult = document.getElementById("result-text");
+      textareaResult.select();
+      textareaResult.setSelectionRange(0, 99999); // For mobile devices
+
+      navigator.clipboard.writeText(textareaResult.value);
+    }
+  });
+
+  /**
+   * @param {string} sentence
+  */
+  const formatter = (sentence) => {
+    if (!sentence) throw new Error("Пустое предложение");
+
+    let result = [];
+
+    for (const letter in sentence) {
+      if (sentence[letter] === ' ') {
+        let spaceSeparatorCounter = 0;
+        while (spaceSeparatorCounter < sepparatorCount) {
+          result.push(separator);
+          spaceSeparatorCounter++;
+        }
+
+      }
+      else {
+
+        let letterSeparatorCounter = 0;
+        result.push(sentence[letter]);
+        while (letterSeparatorCounter < sepparatorCount) {
+
+          result.push(separator);
+          letterSeparatorCounter++;
+        }
+      }
+
+
+      letterSeparatorCounter = 0;
+    }
+
+    return result.join('');
+  }
+
+  /**
+  * @param {string} sentence
+  */
+  const displayText = (sentence) => {
+    const textarea = document.getElementById("result-text");
+    const formattedText = formatter(sentence);
+    textarea.value = formattedText;
+  }
+</script>
+
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    font-weight: 600;
+    color: #faa300;
+  }
+
+  header {
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+
+  header>p {
+    color: gray;
+  }
+
+  .container {
+    max-width: 1200px;
+    padding: 0px 16px;
+    margin: 0 auto;
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  textarea {
+    border: 1px solid gainsboro;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  input {
+    border: 1px solid gainsboro;
+    padding: 8px;
+    border-radius: 4px;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: 2px solid #ffda94;
+  }
+
+  label>div {
+    margin-bottom: 4px;
+  }
+
+  button {
+    border: none;
+    background-color: #FAA300;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #613f00;
+    cursor: pointer;
+  }
+</style>
+
+</html>
